@@ -1,7 +1,7 @@
 //Массив начальных значений
 let startArr = [
-    { fullName: { surname: 'xxx', firstName: 'yyy', middleName: 'zzz' } },
-    { fullName: { surname: 'XXX', firstName: 'YYY', middleName: 'ZZZ' } }
+    { fullName: { surname: 'xxx', firstName: 'yyy', middleName: { surname: 'xxx', firstName: 'yyy', middleName: 'zzz' } } },
+    { fullName: { surname: 'XXX', firstName: 'YYY', middleName: 'ZZZ'}}
 ]
 //Массив-результат который должен быть
 let finishArr = [
@@ -13,9 +13,14 @@ let changeArr = {
     fullName: {
         surname: true,
         firstName: true,
-        middleName: false
+        middleName: {
+            surname: true,
+            firstName: true,
+            middleName: true,
+        }
     }
 }
+
 //Правило локализации
 let localArr = { "fullName.surname": "Прізвище", "fullName.middleName": "По-батькові" }
 
@@ -110,12 +115,56 @@ function ourFunc(startArr, changeArr, localArr) {
             }
         }
     }
+
     return finalArr
 }
 
-let arr = ourFunc(startArr, changeArr, localArr)
+let changeSecondArr = {}
+let startSecondArr = []
 
-console.log(arr)
+for (let obj in changeArr) {//Добавляем вложеный объект условий
+    for (prop in changeArr[obj]) {
+        if (typeof changeArr[obj][prop] == 'object') {
+            changeSecondArr[prop] = changeArr[obj][prop]
+        }
+    }
+}
+console.log('--------------------------------------------------------')
+console.log(changeSecondArr)
+console.log('--------------------------------------------------------')
+
+for (let obj of startArr) {//Добавляем вложеный объект начального массива
+    for (let prop in obj) {
+        for (let OBJ in obj[prop]) {
+            if (typeof obj[prop][OBJ] == 'object') {
+                // obj[prop][OBJ] = ourFunc(obj[prop][OBJ], changeSecondArr, localArr)
+                let Obj = {}
+                Obj[OBJ] = obj[prop][OBJ]
+                startSecondArr.push(Obj)
+            }
+        }
+    }
+}
+for (let obj of startArr) {// Меняем вложеный объект начального массива
+    for (let prop in obj) {
+        for (let OBJ in obj[prop]) {
+            if (typeof obj[prop][OBJ] == 'object') {
+                console.log(obj[prop][OBJ] = ourFunc(startSecondArr, changeSecondArr, localArr))
+            }
+        }
+    }
+}
+
+console.log(startSecondArr)
+console.log('--------------------------------------------------------')
+console.log(startArr)
+console.log('--------------------------------------------------------')
+
+
+
+let final = ourFunc(startArr, changeArr, localArr)
+console.log(final)
+
 
 
 
